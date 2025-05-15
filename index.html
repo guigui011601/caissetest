@@ -1,0 +1,2684 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beach Club Management</title>
+  <base target="_top">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    :root {
+      --primary-color: #2196F3;
+      --secondary-color: #4CAF50;
+      --tertiary-color: #00BCD4;
+      --quaternary-color: #FFC107;
+      --danger-color: #f44336;
+      --success-color: #4CAF50;
+      --text-color: #333;
+      --text-light: white;
+      --background-color: #f5f5f5;
+      --card-color: white;
+      --header-color: #333;
+      --border-color: #ddd;
+      --hover-color: #f9f9f9;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode {
+      --primary-color: #1976D2;
+      --secondary-color: #388E3C;
+      --tertiary-color: #0097A7;
+      --quaternary-color: #FFA000;
+      --danger-color: #D32F2F;
+      --success-color: #388E3C;
+      --text-color: #f5f5f5;
+      --text-light: white;
+      --background-color: #121212;
+      --card-color: #1e1e1e;
+      --header-color: #2c2c2c;
+      --border-color: #3a3a3a;
+      --hover-color: #2a2a2a;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      padding: 15px 20px;
+      text-align: center;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+    }
+    
+    .header h1 {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 80px auto;
+      background: var(--card-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px var(--shadow-color);
+      overflow: hidden;
+    }
+    
+    .login-form {
+      padding: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+      background-color: var(--card-color);
+      color: var(--text-color);
+    }
+    
+    .form-group input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .btn:hover {
+      background-color: #1976D2;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      background-color: var(--header-color);
+      color: white;
+      padding: 10px 20px;
+    }
+    
+    .user-info span {
+      margin-right: auto;
+    }
+    
+    .btn-nav {
+      background-color: var(--danger-color);
+      margin-left: 10px;
+      padding: 6px 12px;
+      font-size: 14px;
+    }
+    
+    .btn-admin {
+      background-color: var(--primary-color);
+    }
+    
+    .main-menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .menu-card {
+      background-color: var(--card-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      overflow: hidden;
+      width: 250px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    
+    .menu-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px var(--shadow-color);
+    }
+    
+    .menu-card-caisse {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .menu-card-stocks {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .menu-card-rapports {
+      background-color: var(--tertiary-color);
+      color: white;
+    }
+    
+    .menu-card-config {
+      background-color: var(--quaternary-color);
+      color: white;
+    }
+    
+    .menu-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+      font-size: 36px;
+    }
+    
+    .menu-title {
+      padding: 15px;
+      text-align: center;
+      font-weight: 500;
+    }
+    
+    .menu-subtitle {
+      padding: 0 15px 15px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    
+    .module-container {
+      background-color: var(--card-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      margin-top: 30px;
+      overflow: hidden;
+    }
+    
+    .module-header {
+      background-color: var(--header-color);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .module-header h2 {
+      font-size: 20px;
+    }
+    
+    .module-back {
+      background-color: transparent;
+      border: 1px solid white;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .module-back:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .module-content {
+      padding: 20px;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      color: var(--text-color);
+    }
+    
+    .tab.active {
+      border-bottom: 2px solid var(--primary-color);
+      color: var(--primary-color);
+    }
+    
+    .tab:hover:not(.active) {
+      background-color: var(--hover-color);
+    }
+    
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .product-item {
+      background-color: var(--hover-color);
+      border-radius: 6px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .product-item:hover {
+      background-color: var(--border-color);
+    }
+    
+    .product-name {
+      font-weight: 500;
+      margin-bottom: 5px;
+      color: var(--text-color);
+    }
+    
+    .product-price {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    .cart {
+      margin-top: 30px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: var(--card-color);
+    }
+    
+    .cart-header {
+      background-color: var(--hover-color);
+      padding: 10px 15px;
+      font-weight: 500;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      color: var(--text-color);
+    }
+    
+    .cart-item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--border-color);
+      align-items: center;
+      color: var(--text-color);
+    }
+    
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background-color: var(--hover-color);
+      font-weight: 500;
+      color: var(--text-color);
+    }
+    
+    .cart-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .cart-btn {
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    
+    .btn-cancel {
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+    }
+    
+    .btn-validate {
+      background-color: var(--success-color);
+      color: white;
+      border: none;
+    }
+    
+    .quantity-control {
+      display: flex;
+      align-items: center;
+    }
+    
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      background-color: var(--hover-color);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+    
+    .quantity {
+      width: 40px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      border-left: none;
+      border-right: none;
+      height: 28px;
+      background-color: var(--card-color);
+      color: var(--text-color);
+    }
+    
+    .remove-item {
+      color: var(--danger-color);
+      cursor: pointer;
+    }
+    
+    .table-container {
+      overflow-x: auto;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: var(--text-color);
+    }
+    
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+      background-color: var(--hover-color);
+      font-weight: 500;
+    }
+    
+    tr:hover {
+      background-color: var(--hover-color);
+    }
+    
+    .action-btn {
+      padding: 6px 12px;
+      border-radius: 4px;
+      margin-right: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      border: none;
+    }
+    
+    .edit-btn {
+      background-color: var(--primary-color);
+      color: white;
+    }
+    
+    .delete-btn {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    .floating-add {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .floating-add:hover {
+      background-color: #1976D2;
+    }
+    
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .modal-content {
+      background-color: var(--card-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px var(--shadow-color);
+      width: 90%;
+      max-width: 500px;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: 500;
+    }
+    
+    .modal-close {
+      background-color: transparent;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      padding: 20px;
+    }
+    
+    .modal-footer {
+      padding: 15px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background-color: var(--hover-color);
+    }
+    
+    .hidden {
+      display: none;
+    }
+
+    .theme-toggle {
+      margin-left: 10px;
+      padding: 6px 12px;
+      font-size: 14px;
+      background-color: var(--header-color);
+      color: white;
+      border: 1px solid white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    
+    .theme-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .cart-header, .cart-item {
+        grid-template-columns: 2fr 1fr 1fr auto;
+      }
+      
+      .cart-item .cart-price {
+        display: none;
+      }
+      
+      .cart-header .header-price {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .main-menu {
+        gap: 10px;
+      }
+      
+      .menu-card {
+        width: 140px;
+      }
+      
+      .menu-icon {
+        height: 70px;
+        font-size: 28px;
+      }
+      
+      .menu-title {
+        padding: 10px;
+        font-size: 14px;
+      }
+      
+      .menu-subtitle {
+        display: none;
+      }
+
+      .main-tabs {
+  margin-bottom: 0; /* Réduire l'espace si les sous-onglets sont affichés */
+}
+
+      .sub-tabs {
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sub-tabs {
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--border-color);
+  padding-top: 5px;
+  background-color: var(--background-color);
+}
+
+.sub-tabs.hidden {
+  display: none;
+}
+
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Page -->
+  <div id="loginPage">
+    <div class="login-container">
+      <div class="header">
+        <h1>Beach Club</h1>
+        <p>Système de caisse</p>
+      </div>
+      <div class="login-form">
+        <div class="form-group">
+          <label for="username">Identifiant</label>
+          <input type="text" id="username" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input type="password" id="password">planSalleCard
+        </div>
+        <button id="loginBtn" class="btn">Se connecter</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Main Application -->
+  <div id="appContainer" class="hidden">
+    <div class="user-info">
+      <span id="userDisplay">Vendeur: Mike</span>
+      <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+      <button id="adminBtn" class="btn btn-nav btn-admin">Administration</button>
+      <button id="logoutBtn" class="btn btn-nav">Déconnexion</button>
+    </div>
+    
+    <!-- Main Menu -->
+    <div id="mainMenu" class="container">
+      <div class="header">
+        <h1>Beach Club Management</h1>
+        <p>Système de gestion pour Beach Club</p>
+      </div>
+      
+      <div class="main-menu">
+        <div class="menu-card menu-card-caisse" data-module="caisse">
+          <div class="menu-icon">
+            <i class="fas fa-cash-register"></i>
+          </div>
+          <div class="menu-title">Caisse</div>
+          <div class="menu-subtitle">Gérer les commandes</div>
+        </div>
+
+<div class="menu-card menu-card-salle" id="planSalleCard">
+  <div class="menu-icon">
+    <i class="fas fa-map-marked-alt"></i>
+  </div>
+  <div class="menu-title">Plan de Salle</div>
+  <div class="menu-subtitle">Gérer les tables</div>
+</div>
+        
+        <div class="menu-card menu-card-stocks" data-module="stocks">
+          <div class="menu-icon">
+            <i class="fas fa-box"></i>
+          </div>
+          <div class="menu-title">Stocks</div>
+          <div class="menu-subtitle">Gérer les inventaires</div>
+        </div>
+        
+        <div class="menu-card menu-card-rapports" data-module="rapports">
+          <div class="menu-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="menu-title">Rapports</div>
+          <div class="menu-subtitle">Voir les statistiques</div>
+        </div>
+        
+        <div class="menu-card menu-card-config" data-module="config">
+          <div class="menu-icon">
+            <i class="fas fa-cog"></i>
+          </div>
+          <div class="menu-title">Configuration</div>
+          <div class="menu-subtitle">Paramètres système</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Caisse Module -->
+    <div id="caisseModule" class="container hidden">
+      <div class="module-container">
+<div class="module-header">
+  <h2>Caisse<span id="selectedTableInfo"></span></h2>
+  <div>
+    <button id="clearTableBtn" class="module-back hidden">Libérer la table</button>
+    <button class="module-back">Retour</button>
+  </div>
+</div>
+
+<div class="module-content">
+  <div class="tabs main-tabs">
+    <div class="tab active" data-tab="bar">Bar</div>
+    <div class="tab" data-tab="restaurant">Restaurant</div>
+  </div>
+  
+  <div id="restaurantSubTabs" class="tabs sub-tabs hidden">
+    <div class="tab active" data-tab="entrees">Entrées</div>
+    <div class="tab" data-tab="plats">Plats</div>
+    <div class="tab" data-tab="desserts">Desserts</div>
+    <div class="tab" data-tab="boissons">Boissons</div>
+  </div>
+  
+  <div id="barTab" class="tab-content">
+    <div class="product-grid" id="barProducts">
+      <!-- Products will be loaded here -->
+    </div>
+  </div>
+  
+  <div id="entreesTab" class="tab-content hidden">
+    <div class="product-grid" id="entreesProducts">
+      <!-- Entrées products will be loaded here -->
+    </div>
+  </div>
+  
+  <div id="platsTab" class="tab-content hidden">
+    <div class="product-grid" id="platsProducts">
+      <!-- Plats products will be loaded here -->
+    </div>
+  </div>
+  
+  <div id="dessertsTab" class="tab-content hidden">
+    <div class="product-grid" id="dessertsProducts">
+      <!-- Desserts products will be loaded here -->
+    </div>
+  </div>
+  
+  <div id="boissonsTab" class="tab-content hidden">
+    <div class="product-grid" id="boissonsProducts">
+      <!-- Boissons products will be loaded here -->
+    </div>
+  </div>
+  
+  <!-- Le reste du contenu du module... -->
+          
+          <div class="cart">
+            <div class="cart-header">
+              <div>Produit</div>
+              <div class="header-price">Prix</div>
+              <div>Quantité</div>
+              <div>Total</div>
+              <div></div>
+            </div>
+            <div id="cartItems">
+              <!-- Cart items will be added here -->
+            </div>
+            <div class="cart-total">
+              <span>Total</span>
+              <span id="cartTotal">0.00 €</span>
+            </div>
+          </div>
+          
+          <div class="cart-actions">
+            <button class="cart-btn btn-cancel" id="cancelCart">Annuler</button>
+            <button class="cart-btn btn-validate" id="validateCart">Valider la commande</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Stocks Module -->
+    <div id="stocksModule" class="container hidden">
+      <div class="module-container">
+        <div class="module-header">
+          <h2>Gestion des Stocks</h2>
+          <button class="module-back">Retour</button>
+        </div>
+        <div class="module-content">
+          <div class="table-container">
+            <table id="stocksTable">
+              <thead>
+                <tr>
+                  <th>Ingrédient</th>
+                  <th>Quantité</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Stock items will be loaded here -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="floating-add" id="addStockBtn">+</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Rapports Module -->
+    <div id="rapportsModule" class="container hidden">
+      <div class="module-container">
+        <div class="module-header">
+          <h2>Rapports et Statistiques</h2>
+          <button class="module-back">Retour</button>
+        </div>
+        <div class="module-content">
+          <div class="tabs">
+            <div class="tab active" data-tab="daily">Journalier</div>
+            <div class="tab" data-tab="weekly">Hebdomadaire</div>
+            <div class="tab" data-tab="monthly">Mensuel</div>
+          </div>
+          
+          <div id="reportsContent">
+            <!-- Reports will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Configuration Module -->
+    <div id="configModule" class="container hidden">
+      <div class="module-container">
+        <div class="module-header">
+          <h2>Configuration Système</h2>
+          <button class="module-back">Retour</button>
+        </div>
+        <div class="module-content">
+          <div class="tabs">
+            <div class="tab active" data-tab="users">Utilisateurs</div>
+            <div class="tab" data-tab="products">Produits</div>
+            <div class="tab" data-tab="settings">Paramètres</div>
+          </div>
+          
+          <div id="usersTab" class="tab-content">
+            <div class="table-container">
+              <table id="usersTable">
+                <thead>
+                  <tr>
+                    <th>Identifiant</th>
+                    <th>Nom</th>
+                    <th>Rôle</th>
+                    <th>Dernière connexion</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Users will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="floating-add" id="addUserBtn">+</div>
+          </div>
+          
+          <div id="productsTab" class="tab-content hidden">
+            <div class="tabs">
+              <div class="tab active" data-tab="bar-products">Produits Bar</div>
+              <div class="tab" data-tab="restaurant-products">Produits Restaurant</div>
+            </div>
+            
+            <div class="table-container">
+              <table id="productsTable">
+                <thead>
+                  <tr>
+                    <th>Nom</th>
+                    <th>Prix</th>
+                    <th>Catégorie</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Products will be loaded here -->
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="floating-add" id="addProductBtn">+</div>
+          </div>
+          
+          <div id="settingsTab" class="tab-content hidden">
+            <div class="form-group">
+              <label for="businessName">Nom de l'établissement</label>
+              <input type="text" id="businessName" value="Beach Club">
+            </div>
+
+            <div class="form-actions">
+              <button class="cart-btn btn-validate" id="saveSettings">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Ajouter un utilisateur</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="userIdentifiant">Identifiant</label>
+            <input type="text" id="userIdentifiant">
+          </div>
+          <div class="form-group">
+            <label for="userPassword">Mot de passe</label>
+            <input type="password" id="userPassword">
+          </div>
+          <div class="form-group">
+            <label for="userName">Nom</label>
+            <input type="text" id="userName">
+          </div>
+          <div class="form-group">
+            <label for="userRole">Rôle</label>
+            <select id="userRole">
+              <option value="admin">Administrateur</option>
+              <option value="vendeur">Vendeur</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cart-btn btn-cancel" id="cancelUserModal">Annuler</button>
+          <button class="cart-btn btn-validate" id="saveUser">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Add/Edit Product Modal -->
+    <div id="productModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Ajouter un produit</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="productName">Nom du produit</label>
+            <input type="text" id="productName">
+          </div>
+          <div class="form-group">
+            <label for="productPrice">Prix (€)</label>
+            <input type="number" id="productPrice" step="0.01">
+          </div>
+          <div class="form-group">
+            <label for="productCategory">Catégorie</label>
+            <select id="productCategory">
+              <option value="bar">Bar</option>
+              <option value="restaurant">Restaurant</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cart-btn btn-cancel" id="cancelProductModal">Annuler</button>
+          <button class="cart-btn btn-validate" id="saveProduct">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Add/Edit Stock Modal -->
+    <div id="stockModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Modifier le stock</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="stockName">Nom de l'ingrédient</label>
+            <input type="text" id="stockName" disabled>
+          </div>
+          <div class="form-group">
+            <label for="stockQuantity">Quantité</label>
+            <input type="number" id="stockQuantity" min="0">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="cart-btn btn-cancel" id="cancelStockModal">Annuler</button>
+          <button class="cart-btn btn-validate" id="saveStock">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+// Global variables
+let currentUser = null;
+let cartItems = [];
+let activeTab = 'bar';
+let isDarkMode = false;
+let selectedTableId = null;
+let selectedTableNumber = null;
+
+// Fonction pour initialiser l'admin par défaut
+function callInitDefaultAdmin() {
+  google.script.run
+    .withSuccessHandler(function(result) {
+      console.log("Initialisation de l'utilisateur admin vérifiée");
+    })
+    .withFailureHandler(function(error) {
+      console.error("Erreur lors de la vérification de l'admin:", error);
+    })
+    .initDefaultAdmin();
+}
+
+// Appelez cette fonction au début pour s'assurer que l'admin existe
+callInitDefaultAdmin();
+
+document.getElementById('planSalleCard').addEventListener('click', function() {
+  openFloorPlan();
+});
+
+// Wait for the Google Apps Script to load
+google.script.run.withSuccessHandler(function() {
+            setupEventListeners();
+    }).isScriptRunning();
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Just ensuring we're ready for user interaction
+      setupEventListeners();
+      
+      // Check if dark mode was previously enabled
+      const savedDarkMode = localStorage.getItem('darkMode');
+      if (savedDarkMode === 'true') {
+        enableDarkMode();
+      }
+    });
+
+    function checkForSelectedTable() {
+  // Vérifier si une table a été sélectionnée
+  const tableId = localStorage.getItem('selectedTableId');
+  const tableNumber = localStorage.getItem('selectedTableNumber');
+  
+  if (tableId && tableNumber) {
+    selectedTableId = parseInt(tableId);
+    selectedTableNumber = parseInt(tableNumber);
+    
+    // Afficher les informations de la table dans l'interface de caisse
+    document.getElementById('selectedTableInfo').textContent = ` - Table ${selectedTableNumber}`;
+    document.getElementById('clearTableBtn').classList.remove('hidden');
+    
+    
+    // Charger la commande de la table si elle existe
+    loadTableOrder(selectedTableId);
+    
+    // Nettoyer le localStorage pour éviter des problèmes de persistance
+    localStorage.removeItem('selectedTableId');
+    localStorage.removeItem('selectedTableNumber');
+  }
+}
+
+// Fonction pour charger la commande d'une table
+function loadTableOrder(tableId) {
+  google.script.run
+    .withSuccessHandler(function(order) {
+      if (order && order.items) {
+        // Remplir le panier avec les éléments de la commande
+        cartItems = order.items;
+        renderCart();
+      }
+    })
+    .withFailureHandler(function(error) {
+      console.error("Erreur lors du chargement de la commande:", error);
+    })
+    .getTableOrder(tableId);
+}
+
+// Fonction pour libérer une table
+function clearTable() {
+  if (!selectedTableId) return;
+  
+  if (confirm(`Êtes-vous sûr de vouloir libérer la table ${selectedTableNumber}?`)) {
+    google.script.run
+      .withSuccessHandler(function(success) {
+        if (success) {
+          // Réinitialiser l'interface
+          document.getElementById('selectedTableInfo').textContent = '';
+          document.getElementById('clearTableBtn').classList.add('hidden');
+          
+          // Vider le panier
+          clearCart();
+          
+          // Réinitialiser les variables
+          selectedTableId = null;
+          selectedTableNumber = null;
+        } else {
+          alert('Erreur lors de la libération de la table');
+        }
+      })
+      .withFailureHandler(function(error) {
+        console.error("Erreur lors de la libération de la table:", error);
+        alert('Erreur lors de la libération de la table');
+      })
+      .freeTable(selectedTableId);
+  }
+}
+    
+    // Setup event listeners
+function setupEventListeners() {
+  // Login form
+  document.getElementById('loginBtn').addEventListener('click', login);
+  
+  // Main menu cards
+  document.querySelectorAll('.menu-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const module = this.getAttribute('data-module');
+      showModule(module);
+    });
+  });
+  
+  // Back buttons
+  document.querySelectorAll('.module-back').forEach(btn => {
+    btn.addEventListener('click', showMainMenu);
+  });
+  
+  // Tab navigation
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabType = this.getAttribute('data-tab');
+      switchTab(tabType, this.parentElement);
+    });
+  });
+
+  document.querySelectorAll('.menu-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const module = this.getAttribute('data-module');
+      if (module === 'salle') {
+        openFloorPlan();
+      } else {
+        showModule(module);
+      }
+    });
+  });
+
+  // Tab navigation for restaurant sub-tabs
+document.querySelectorAll('#restaurantSubTabs .tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    const tabType = this.getAttribute('data-tab');
+    switchRestaurantTab(tabType);
+  });
+});
+
+document.getElementById('clearTableBtn').addEventListener('click', clearTable);
+  
+  // Tab navigation specifically for config module
+  document.querySelectorAll('#configModule .tabs .tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      const tabType = this.getAttribute('data-tab');
+      
+      // Hide all tab contents
+      document.getElementById('usersTab').classList.add('hidden');
+      document.getElementById('productsTab').classList.add('hidden');
+      document.getElementById('settingsTab').classList.add('hidden');
+      
+      // Show selected tab content
+      document.getElementById(tabType + 'Tab').classList.remove('hidden');
+      
+      // Set active tab
+      document.querySelectorAll('#configModule .tabs .tab').forEach(t => {
+        t.classList.remove('active');
+      });
+      this.classList.add('active');
+      
+      // Special handling for products tab
+      if (tabType === 'products') {
+        loadProducts();
+        
+        // Force the bar products tab to be active
+        setTimeout(function() {
+          const barProductsTab = document.querySelector('#productsTab .tabs [data-tab="bar-products"]');
+          if (barProductsTab) {
+            // Set active class manually
+            document.querySelectorAll('#productsTab .tabs .tab').forEach(t => {
+              t.classList.remove('active');
+            });
+            barProductsTab.classList.add('active');
+            
+            // Load bar products
+            loadProductsByCategory('bar');
+          }
+        }, 100);
+      }
+    });
+  });
+  
+  // Logout button
+  document.getElementById('logoutBtn').addEventListener('click', logout);
+  
+  // Admin button
+  document.getElementById('adminBtn').addEventListener('click', function() {
+    showModule('config');
+  });
+  
+  // Theme toggle button
+  document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+  
+  // Cart buttons
+  document.getElementById('cancelCart').addEventListener('click', clearCart);
+  document.getElementById('validateCart').addEventListener('click', processOrder);
+  
+  // Modal close buttons
+  document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', function() {
+      closeAllModals();
+    });
+  });
+  
+  // Add buttons
+  document.getElementById('addUserBtn').addEventListener('click', showAddUserModal);
+  document.getElementById('addProductBtn').addEventListener('click', showAddProductModal);
+  document.getElementById('addStockBtn').addEventListener('click', showAddStockModal);
+  
+  // Modal cancel buttons
+  document.getElementById('cancelUserModal').addEventListener('click', closeAllModals);
+  document.getElementById('cancelProductModal').addEventListener('click', closeAllModals);
+  document.getElementById('cancelStockModal').addEventListener('click', closeAllModals);
+  
+  // Modal save buttons
+  document.getElementById('saveUser').addEventListener('click', saveUser);
+  document.getElementById('saveProduct').addEventListener('click', saveProduct);
+  document.getElementById('saveStock').addEventListener('click', saveStock);
+  
+  // Settings save button
+  document.getElementById('saveSettings').addEventListener('click', saveSettings);
+}
+    
+    // Toggle dark mode
+    function toggleDarkMode() {
+      if (isDarkMode) {
+        disableDarkMode();
+      } else {
+        enableDarkMode();
+      }
+    }
+    
+    // Enable dark mode
+    function enableDarkMode() {
+      document.body.classList.add('dark-mode');
+      document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+      isDarkMode = true;
+      localStorage.setItem('darkMode', 'true');
+    }
+    
+    // Disable dark mode
+    function disableDarkMode() {
+      document.body.classList.remove('dark-mode');
+      document.getElementById('themeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+      isDarkMode = false;
+      localStorage.setItem('darkMode', 'false');
+    }
+    
+    // Login function
+function login() {
+  // Force initialisation de l'utilisateur admin par défaut
+  google.script.run.initDefaultUser();
+  
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  
+      if (!username || !password) {
+        alert('Veuillez saisir votre identifiant et mot de passe');
+        return;
+      }
+      
+      // Call the server-side function to check credentials
+      google.script.run
+        .withSuccessHandler(function(user) {
+          if (user) {
+            currentUser = user;
+            document.getElementById('userDisplay').textContent = `${user.role === 'admin' ? 'Administrateur' : 'Vendeur'}: ${user.nom}`;
+            
+            // Show/hide admin button based on role
+            document.getElementById('adminBtn').style.display = user.role === 'admin' ? 'block' : 'none';
+            
+            // Show the app and hide login
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            
+            // Load initial data
+            loadData();
+          } else {
+            alert('Identifiant ou mot de passe incorrect');
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur de connexion:", error);
+          alert('Erreur de connexion. Veuillez réessayer.');
+        })
+        .checkLogin(username, password);
+    }
+    
+    // Logout function
+    function logout() {
+      currentUser = null;
+      document.getElementById('loginPage').classList.remove('hidden');
+      document.getElementById('appContainer').classList.add('hidden');
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      clearCart();
+    }
+    
+    // Load initial data
+    function loadData() {
+      loadBarProducts();
+      loadRestaurantProducts();
+      loadStockItems();
+      loadUsers();
+      loadReports();
+    }
+    
+    // Show main menu
+    function showMainMenu() {
+      document.querySelectorAll('.container').forEach(container => {
+        container.classList.add('hidden');
+      });
+      document.getElementById('mainMenu').classList.remove('hidden');
+    }
+    
+    // Show a specific module
+    // Show a specific module
+function showModule(module) {
+  document.querySelectorAll('.container').forEach(container => {
+    container.classList.add('hidden');
+  });
+  document.getElementById(module + 'Module').classList.remove('hidden');
+  
+  // Refresh data when showing a module
+  switch(module) {
+    case 'caisse':
+      activeTab = 'bar';
+      switchTab('bar', document.querySelector('#caisseModule .tabs'));
+      break;
+    case 'stocks':
+      loadStockItems();
+      break;
+    case 'rapports':
+      loadReports();
+      break;
+    case 'config':
+      loadUsers();
+      
+      // Comportement spécial pour l'onglet "Produits"
+      const activeTab = document.querySelector('#configModule .tabs .active');
+      const tabType = activeTab ? activeTab.getAttribute('data-tab') : null;
+      
+      if (tabType === 'products') {
+        // Si l'onglet actif est "Produits", charger les produits
+        loadProducts();
+        
+        // S'assurer qu'un sous-onglet est actif
+        setTimeout(function() {
+          const activeSubTab = document.querySelector('#productsTab .tabs .active');
+          if (!activeSubTab) {
+            // Si aucun sous-onglet n'est actif, activer "Produits Bar" par défaut
+            const barProductsTab = document.querySelector('#productsTab .tabs [data-tab="bar-products"]');
+            if (barProductsTab) {
+              barProductsTab.click();
+            }
+          }
+        }, 100);
+      } else {
+        // Si l'onglet actif n'est pas "Produits", activer l'onglet "Utilisateurs" par défaut
+        switchTab('users', document.querySelector('#configModule .tabs'));
+      }
+      break;
+  }
+}
+    
+// Switch tabs
+function switchTab(tabName, tabContainer) {
+  // Mise à jour de l'onglet actif dans le conteneur
+  tabContainer.querySelectorAll('.tab').forEach(tab => {
+    if (tab.getAttribute('data-tab') === tabName) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+  
+  // Trouver le module parent
+  const moduleId = tabContainer.closest('.module-container').parentElement.id;
+  
+  // Gérer les changements d'onglets spécifiques
+  if (moduleId === 'caisseModule') {
+    // Gérer les sous-onglets de restaurant
+    if (tabName === 'restaurant') {
+      // Afficher les sous-onglets de restaurant
+      document.getElementById('restaurantSubTabs').classList.remove('hidden');
+      
+      // Cacher l'onglet Bar
+      document.getElementById('barTab').classList.add('hidden');
+      
+      // Afficher l'onglet de la sous-catégorie active
+      const activeSubTab = document.querySelector('#restaurantSubTabs .tab.active');
+      const activeSubTabName = activeSubTab ? activeSubTab.getAttribute('data-tab') : 'entrees';
+      
+      document.getElementById(activeSubTabName + 'Tab').classList.remove('hidden');
+      
+      // Charger les produits de la sous-catégorie active
+      loadRestaurantCategoryProducts(activeSubTabName);
+    } else if (tabName === 'bar') {
+      // Cacher les sous-onglets de restaurant
+      document.getElementById('restaurantSubTabs').classList.add('hidden');
+      
+      // Cacher tous les onglets de sous-catégories
+      document.getElementById('entreesTab').classList.add('hidden');
+      document.getElementById('platsTab').classList.add('hidden');
+      document.getElementById('dessertsTab').classList.add('hidden');
+      document.getElementById('boissonsTab').classList.add('hidden');
+      
+      // Afficher l'onglet Bar
+      document.getElementById('barTab').classList.remove('hidden');
+      
+      // Charger les produits du bar
+      loadBarProducts();
+    }
+
+  } else if (moduleId === 'configModule') {
+    document.getElementById('usersTab').classList.add('hidden');
+    document.getElementById('productsTab').classList.add('hidden');
+    document.getElementById('settingsTab').classList.add('hidden');
+    document.getElementById(tabName + 'Tab').classList.remove('hidden');
+    
+    if (tabName === 'products') {
+      loadProducts();
+      
+      // Force the bar products tab to be active by default
+      setTimeout(function() {
+        const barProductsTab = document.querySelector('#productsTab .tabs [data-tab="bar-products"]');
+        if (barProductsTab) {
+          // Set active class manually
+          document.querySelectorAll('#productsTab .tabs .tab').forEach(t => {
+            t.classList.remove('active');
+          });
+          barProductsTab.classList.add('active');
+          
+          // Force load bar products
+          forceLoadProducts('bar-products');
+        }
+      }, 300);
+    }
+  } else if (moduleId === 'rapportsModule') {
+    loadReportsByPeriod(tabName);
+  } else if (tabContainer.closest('#productsTab')) {
+    // Direct loading for product category tabs
+    forceLoadProducts(tabName);
+  }
+}
+    
+    // Load bar products
+    function loadBarProducts() {
+      document.getElementById('barProducts').innerHTML = '<div style="text-align:center; padding:20px;">Chargement des produits...</div>';
+      
+      google.script.run
+        .withSuccessHandler(function(products) {
+          renderProducts(products, 'barProducts');
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors du chargement des produits bar:", error);
+          document.getElementById('barProducts').innerHTML = '<div style="text-align:center; padding:20px; color:red;">Erreur lors du chargement des produits</div>';
+        })
+        .getProducts('bar');
+    }
+    
+    // Load restaurant products
+function loadRestaurantProducts() {
+  // Sélectionner l'onglet des entrées par défaut
+  const activeSubTab = document.querySelector('#restaurantSubTabs .tab.active');
+  const activeCategory = activeSubTab ? activeSubTab.getAttribute('data-tab') : 'entrees';
+  
+  // Charger la catégorie active immédiatement
+  loadRestaurantCategoryProducts(activeCategory);
+  
+  // Précharger les autres catégories
+  setTimeout(() => {
+    const categories = ['entrees', 'plats', 'desserts', 'boissons'];
+    categories.forEach(category => {
+      if (category !== activeCategory) {
+        loadRestaurantCategoryProducts(category);
+      }
+    });
+  }, 500);
+}
+    
+    // Render products in the specified container
+    function renderProducts(products, containerId) {
+      const container = document.getElementById(containerId);
+      
+      if (!products || products.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:20px;">Aucun produit disponible</div>';
+        return;
+      }
+      
+      container.innerHTML = '';
+      
+      products.forEach(product => {
+        const productDiv = document.createElement('div');
+        productDiv.className = 'product-item';
+        productDiv.innerHTML = `
+          <div class="product-name">${product.nom}</div>
+          <div class="product-price">${product.prix.toFixed(2)} €</div>
+        `;
+        productDiv.addEventListener('click', function() {
+          addToCart(product);
+        });
+        container.appendChild(productDiv);
+      });
+    }
+
+
+function switchRestaurantTab(tabType) {
+  // Mettre à jour l'onglet actif
+  document.querySelectorAll('#restaurantSubTabs .tab').forEach(tab => {
+    if (tab.getAttribute('data-tab') === tabType) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+  
+  // Cacher tous les contenus de sous-onglets
+  document.getElementById('entreesTab').classList.add('hidden');
+  document.getElementById('platsTab').classList.add('hidden');
+  document.getElementById('dessertsTab').classList.add('hidden');
+  document.getElementById('boissonsTab').classList.add('hidden');
+  
+  // Afficher le contenu sélectionné
+  document.getElementById(tabType + 'Tab').classList.remove('hidden');
+  
+  // Charger les produits pour le sous-onglet sélectionné
+  loadRestaurantCategoryProducts(tabType);
+}
+
+  function loadRestaurantCategoryProducts(category) {
+  const containerId = category + 'Products';
+  const container = document.getElementById(containerId);
+  
+  container.innerHTML = '<div style="text-align:center; padding:20px;">Chargement des produits...</div>';
+  
+  google.script.run
+    .withSuccessHandler(function(products) {
+      renderRestaurantCategoryProducts(products, category);
+    })
+    .withFailureHandler(function(error) {
+      console.error("Erreur lors du chargement des produits " + category + ":", error);
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:red;">Erreur lors du chargement des produits</div>';
+    })
+    .getProductsByCategory(category);
+}
+
+function openFloorPlan() {
+  google.script.run.withSuccessHandler(function(url) {
+    window.location.href = url + '?page=plan-salle';
+  }).getScriptUrl();
+}
+
+function renderRestaurantCategoryProducts(products, category) {
+  const containerId = category + 'Products';
+  const container = document.getElementById(containerId);
+  
+  if (!products || products.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:20px;">Aucun produit disponible</div>';
+    return;
+  }
+  
+  container.innerHTML = '';
+  
+  products.forEach(product => {
+    const productDiv = document.createElement('div');
+    productDiv.className = 'product-item';
+    productDiv.innerHTML = `
+      <div class="product-name">${product.nom}</div>
+      <div class="product-price">${product.prix.toFixed(2)} €</div>
+    `;
+    productDiv.addEventListener('click', function() {
+      addToCart(product);
+    });
+    container.appendChild(productDiv);
+  });
+}
+
+  function loadRestaurantCategoryProducts(category) {
+  const containerId = category + 'Products';
+  const container = document.getElementById(containerId);
+  
+  container.innerHTML = '<div style="text-align:center; padding:20px;">Chargement des produits...</div>';
+  
+  google.script.run
+    .withSuccessHandler(function(products) {
+      renderRestaurantCategoryProducts(products, category);
+    })
+    .withFailureHandler(function(error) {
+      console.error("Erreur lors du chargement des produits " + category + ":", error);
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:red;">Erreur lors du chargement des produits</div>';
+    })
+    .getProductsByCategory(category);
+}
+
+function renderRestaurantCategoryProducts(products, category) {
+  const containerId = category + 'Products';
+  const container = document.getElementById(containerId);
+  
+  if (!products || products.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:20px;">Aucun produit disponible</div>';
+    return;
+  }
+  
+  container.innerHTML = '';
+  
+  products.forEach(product => {
+    const productDiv = document.createElement('div');
+    productDiv.className = 'product-item';
+    productDiv.innerHTML = `
+      <div class="product-name">${product.nom}</div>
+      <div class="product-price">${product.prix.toFixed(2)} €</div>
+    `;
+    productDiv.addEventListener('click', function() {
+      addToCart(product);
+    });
+    container.appendChild(productDiv);
+  });
+}
+
+    // Add a product to the cart
+function addToCart(product) {
+  // Vérifier si le produit existe déjà dans le panier en vérifiant le nom et la catégorie
+  const existingItem = cartItems.find(item => 
+    item.name === product.nom && item.category === product.categorie
+  );
+  
+  if (existingItem) {
+    // Si le produit existe déjà, augmenter sa quantité
+    existingItem.quantity++;
+    existingItem.total = existingItem.quantity * existingItem.price;
+  } else {
+    // Sinon, ajouter un nouveau produit au panier
+    cartItems.push({
+      id: product.id,  // Nous pouvons garder l'ID, mais il ne sera plus utilisé pour les comparaisons
+      name: product.nom,
+      price: product.prix,
+      quantity: 1,
+      total: product.prix,
+      category: product.categorie
+    });
+  }
+  
+  renderCart();
+}
+
+function openFloorPlan() {
+  window.location.href = '<?= ScriptApp.getService().getUrl() ?>?page=plan-salle';
+}
+
+// Modification de processOrder pour associer la commande à une table
+// Note: Remplacez votre fonction processOrder existante par celle-ci
+function processOrder() {
+  if (cartItems.length === 0) {
+    alert('Le panier est vide');
+    return;
+  }
+  
+  // Générer un ID de commande si associé à une table
+  const orderId = selectedTableId ? "CMD" + Date.now() : "";
+  
+  // Préparer les données de la commande
+  const orderData = {
+    items: cartItems,
+    total: cartItems.reduce((sum, item) => sum + item.total, 0),
+    date: new Date().toISOString(),
+    vendeur: currentUser.nom,
+    tableId: selectedTableId,
+    orderId: orderId
+  };
+  
+  // Désactiver le bouton de validation
+  const validateBtn = document.getElementById('validateCart');
+  validateBtn.disabled = true;
+  validateBtn.textContent = 'Traitement en cours...';
+  
+  google.script.run
+    .withSuccessHandler(function(result) {
+      // Réactiver le bouton
+      validateBtn.disabled = false;
+      validateBtn.textContent = 'Valider la commande';
+      
+      if (result.success) {
+        alert('Commande validée avec succès');
+        
+        // Si c'est une commande associée à une table, marquer la table comme occupée
+        if (selectedTableId) {
+          // Mettre à jour le statut de la table côté serveur
+          google.script.run
+            .withSuccessHandler(function(success) {
+              // La mise à jour du statut a réussi
+            })
+            .withFailureHandler(function(error) {
+              console.error("Erreur lors de la mise à jour du statut de la table:", error);
+            })
+            .setTableOccupied(selectedTableId, result.orderId || orderId);
+        }
+        
+        clearCart();
+      } else {
+        alert('Erreur: ' + (result.message || 'Une erreur est survenue'));
+      }
+    })
+    .withFailureHandler(function(error) {
+      // Réactiver le bouton
+      validateBtn.disabled = false;
+      validateBtn.textContent = 'Valider la commande';
+      
+      console.error("Erreur lors du traitement de la commande:", error);
+      alert('Erreur lors du traitement de la commande');
+    })
+    .processOrder(orderData);
+}
+
+// Appelez cette fonction au début du script pour vérifier si une table est sélectionnée
+document.addEventListener('DOMContentLoaded', function() {
+  // Vos initialisations existantes
+  setupEventListeners();
+  modifiedSetupEventListeners(); // Appeler notre fonction modifiée
+  checkForSelectedTable(); // Vérifier si une table est sélectionnée
+});
+    
+    // Render the cart
+    function renderCart() {
+      const cartContainer = document.getElementById('cartItems');
+      cartContainer.innerHTML = '';
+      
+      let total = 0;
+      
+      cartItems.forEach((item, index) => {
+        total += item.total;
+        
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'cart-item';
+        itemDiv.innerHTML = `
+          <div>${item.name}</div>
+          <div class="cart-price">${item.price.toFixed(2)} €</div>
+          <div class="quantity-control">
+            <button class="qty-btn minus-btn">-</button>
+            <input type="text" class="quantity" value="${item.quantity}" readonly>
+            <button class="qty-btn plus-btn">+</button>
+          </div>
+          <div>${item.total.toFixed(2)} €</div>
+          <div class="remove-item"><i class="fas fa-times"></i></div>
+        `;
+        
+        // Add event listeners
+        const minusBtn = itemDiv.querySelector('.minus-btn');
+        const plusBtn = itemDiv.querySelector('.plus-btn');
+        const removeBtn = itemDiv.querySelector('.remove-item');
+        
+        minusBtn.addEventListener('click', function() {
+          updateQuantity(index, -1);
+        });
+        
+        plusBtn.addEventListener('click', function() {
+          updateQuantity(index, 1);
+        });
+        
+        removeBtn.addEventListener('click', function() {
+          removeItem(index);
+        });
+        
+        cartContainer.appendChild(itemDiv);
+      });
+      
+      document.getElementById('cartTotal').textContent = total.toFixed(2) + ' €';
+    }
+    
+    // Update item quantity
+    function updateQuantity(index, change) {
+      const item = cartItems[index];
+      const newQuantity = item.quantity + change;
+      
+      if (newQuantity > 0) {
+        item.quantity = newQuantity;
+        item.total = item.price * newQuantity;
+        renderCart();
+      } else if (newQuantity === 0) {
+        removeItem(index);
+      }
+    }
+    
+    // Remove item from cart
+    function removeItem(index) {
+      cartItems.splice(index, 1);
+      renderCart();
+    }
+    
+    // Clear the cart
+    function clearCart() {
+      cartItems = [];
+      renderCart();
+    }
+    
+    // Process the order
+    function processOrder() {
+      if (cartItems.length === 0) {
+        alert('Le panier est vide');
+        return;
+      }
+      
+      // Prepare order data
+      const orderData = {
+        items: cartItems,
+        total: cartItems.reduce((sum, item) => sum + item.total, 0),
+        date: new Date().toISOString(),
+        vendeur: currentUser.nom
+      };
+      
+      // Disable the validate button to prevent multiple submissions
+      const validateBtn = document.getElementById('validateCart');
+      validateBtn.disabled = true;
+      validateBtn.textContent = 'Traitement en cours...';
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          // Re-enable the button
+          validateBtn.disabled = false;
+          validateBtn.textContent = 'Valider la commande';
+          
+          if (result.success) {
+            alert('Commande validée avec succès');
+            clearCart();
+          } else {
+            alert('Erreur: ' + (result.message || 'Une erreur est survenue'));
+          }
+        })
+        .withFailureHandler(function(error) {
+          // Re-enable the button
+          validateBtn.disabled = false;
+          validateBtn.textContent = 'Valider la commande';
+          
+          console.error("Erreur lors du traitement de la commande:", error);
+          alert('Erreur lors du traitement de la commande');
+        })
+        .processOrder(orderData);
+    }
+    
+    // Load stock items
+    function loadStockItems() {
+      const tableBody = document.querySelector('#stocksTable tbody');
+      tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Chargement des stocks...</td></tr>';
+      
+      google.script.run
+        .withSuccessHandler(function(items) {
+          renderStockItems(items);
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors du chargement des stocks:", error);
+          tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">Erreur lors du chargement des stocks</td></tr>';
+        })
+        .getStockItems();
+    }
+    
+    // Render stock items
+    function renderStockItems(items) {
+      const tableBody = document.querySelector('#stocksTable tbody');
+      
+      if (!items || items.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Aucun ingrédient en stock</td></tr>';
+        return;
+      }
+      
+      tableBody.innerHTML = '';
+      
+      items.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.ingredient}</td>
+          <td>${item.quantite}</td>
+          <td>
+            <button class="action-btn edit-btn">Modifier</button>
+          </td>
+        `;
+        
+        // Add event listener
+        const editBtn = row.querySelector('.edit-btn');
+        editBtn.addEventListener('click', function() {
+          editStock(item.ingredient, item.quantite);
+        });
+        
+        tableBody.appendChild(row);
+      });
+    }
+    
+    // Show edit stock modal
+    function editStock(name, quantity) {
+      document.getElementById('stockName').value = name;
+      document.getElementById('stockName').disabled = true;
+      document.getElementById('stockQuantity').value = quantity;
+      document.getElementById('stockModal').classList.remove('hidden');
+    }
+    
+    // Show add stock modal
+    function showAddStockModal() {
+      document.getElementById('stockName').value = '';
+      document.getElementById('stockName').disabled = false;
+      document.getElementById('stockQuantity').value = '0';
+      document.getElementById('stockModal').classList.remove('hidden');
+    }
+    
+    // Save stock changes
+    function saveStock() {
+      const name = document.getElementById('stockName').value;
+      const quantity = parseInt(document.getElementById('stockQuantity').value);
+      
+      if (!name) {
+        alert('Veuillez saisir le nom de l\'ingrédient');
+        return;
+      }
+      
+      const stockItem = {
+        ingredient: name,
+        quantite: quantity
+      };
+      
+      const saveBtn = document.getElementById('saveStock');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Enregistrement...';
+      
+      google.script.run
+        .withSuccessHandler(function() {
+          // Re-enable the button
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Enregistrer';
+          
+          closeAllModals();
+          loadStockItems();
+        })
+        .withFailureHandler(function(error) {
+          // Re-enable the button
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Enregistrer';
+          
+          console.error("Erreur lors de la mise à jour du stock:", error);
+          alert('Erreur lors de la mise à jour du stock');
+        })
+        .updateStockItem(stockItem);
+    }
+    
+    // Load users
+// Load users
+function loadUsers() {
+  loadUsersWithRetry();
+}
+    
+function loadUsersWithRetry() {
+  const tableBody = document.querySelector('#usersTable tbody');
+  tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Chargement des utilisateurs...</td></tr>';
+  
+  // Appeler initSystem pour s'assurer que tout est correctement configuré
+  google.script.run
+    .withSuccessHandler(function(success) {
+      if (success) {
+        // Maintenant récupérer les utilisateurs
+        google.script.run
+          .withSuccessHandler(handleLoadUsers)
+          .withFailureHandler(handleLoadUsersError)
+          .getUsers();
+      } else {
+        handleLoadUsersError("Erreur d'initialisation du système");
+      }
+    })
+    .withFailureHandler(function(error) {
+      handleLoadUsersError("Erreur d'initialisation: " + error);
+    })
+    .initSystem();
+  
+  // Fonction pour gérer les résultats
+  function handleLoadUsers(users) {
+    if (!users || users.length === 0) {
+      tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun utilisateur trouvé. <a href="#" id="forceInitLink">Cliquez ici</a> pour réinitialiser.</td></tr>';
+      
+      // Ajouter un lien pour forcer la réinitialisation
+      document.getElementById('forceInitLink').addEventListener('click', function(e) {
+        e.preventDefault();
+        forceDiagnostic();
+      });
+      return;
+    }
+    
+    tableBody.innerHTML = '';
+    
+    users.forEach(user => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${user.identifiant || ''}</td>
+        <td>${user.nom || ''}</td>
+        <td>${user.role === 'admin' ? 'Administrateur' : 'Vendeur'}</td>
+        <td>${user.derniere_connexion || 'Jamais'}</td>
+        <td>
+          <button class="action-btn edit-btn">Modifier</button>
+          <button class="action-btn delete-btn" ${user.identifiant === 'admin' ? 'disabled style="opacity:0.5;"' : ''}>Supprimer</button>
+        </td>
+      `;
+      
+      // Ajouter des écouteurs d'événements
+      const editBtn = row.querySelector('.edit-btn');
+      const deleteBtn = row.querySelector('.delete-btn');
+      
+      editBtn.addEventListener('click', function() {
+        editUser(user.identifiant);
+      });
+      
+      deleteBtn.addEventListener('click', function() {
+        if (user.identifiant !== 'admin') {
+          deleteUser(user.identifiant);
+        }
+      });
+      
+      tableBody.appendChild(row);
+    });
+  }
+  
+  // Fonction pour gérer les erreurs
+  function handleLoadUsersError(error) {
+    console.error("Erreur lors du chargement des utilisateurs:", error);
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center; color:red;">
+          Erreur lors du chargement des utilisateurs
+          <br>
+          <button id="diagBtn" class="action-btn">Diagnostic</button>
+        </td>
+      </tr>
+    `;
+    
+    // Ajouter un bouton de diagnostic
+    document.getElementById('diagBtn').addEventListener('click', forceDiagnostic);
+  }
+  
+  // Fonction pour lancer un diagnostic
+  function forceDiagnostic() {
+    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Diagnostic en cours...</td></tr>';
+    
+    google.script.run
+      .withSuccessHandler(function(result) {
+        if (result.success) {
+          // Afficher les informations de diagnostic
+          let diagHtml = `
+            <tr>
+              <td colspan="5" style="text-align:left; padding: 15px;">
+                <h4>Diagnostic de la feuille Utilisateurs:</h4>
+                <p>Feuille existe: ${result.sheetExists ? 'Oui' : 'Non'}</p>
+                <p>Nombre de lignes: ${result.rowCount || 0}</p>
+                <p>Nombre de colonnes: ${result.columnCount || 0}</p>
+                <h4>Données (10 premières lignes):</h4>
+                <pre style="background-color: #f5f5f5; padding: 10px; overflow: auto; max-height: 300px;">${JSON.stringify(result.data, null, 2)}</pre>
+                <button id="forceInitBtn" class="action-btn">Forcer l'initialisation</button>
+              </td>
+            </tr>
+          `;
+          
+          tableBody.innerHTML = diagHtml;
+          
+          // Ajouter un bouton pour forcer l'initialisation
+          document.getElementById('forceInitBtn').addEventListener('click', function() {
+            tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;"><i class="fas fa-spinner fa-spin"></i> Réinitialisation en cours...</td></tr>';
+            
+            google.script.run
+              .withSuccessHandler(function(success) {
+                if (success) {
+                  // Recharger les utilisateurs
+                  loadUsersWithRetry();
+                } else {
+                  tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Échec de la réinitialisation</td></tr>';
+                }
+              })
+              .withFailureHandler(function(error) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Erreur: ' + error + '</td></tr>';
+              })
+              .initSystem();
+          });
+        } else {
+          tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Erreur de diagnostic: ' + result.error + '</td></tr>';
+        }
+      })
+      .withFailureHandler(function(error) {
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:red;">Erreur de diagnostic: ' + error + '</td></tr>';
+      })
+      .diagnosisUsers();
+  }
+}
+
+// Render users
+function renderUsers(users) {
+  console.log("Rendering users:", users);
+  
+  const tableBody = document.querySelector('#usersTable tbody');
+  
+  if (!users || users.length === 0) {
+    console.log("No users found, displaying empty message");
+    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Aucun utilisateur trouvé</td></tr>';
+    return;
+  }
+  
+  tableBody.innerHTML = '';
+  
+  users.forEach(user => {
+    console.log("Adding user to table:", user.identifiant);
+    
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${user.identifiant || ''}</td>
+      <td>${user.nom || ''}</td>
+      <td>${user.role === 'admin' ? 'Administrateur' : 'Vendeur'}</td>
+      <td>${user.derniere_connexion || 'Jamais'}</td>
+      <td>
+        <button class="action-btn edit-btn">Modifier</button>
+        <button class="action-btn delete-btn">Supprimer</button>
+      </td>
+    `;
+    
+    // Add event listeners
+    const editBtn = row.querySelector('.edit-btn');
+    const deleteBtn = row.querySelector('.delete-btn');
+    
+    editBtn.addEventListener('click', function() {
+      editUser(user.identifiant);
+    });
+    
+    deleteBtn.addEventListener('click', function() {
+      deleteUser(user.identifiant);
+    });
+    
+    tableBody.appendChild(row);
+  });
+}
+    
+    // Show add user modal
+    function showAddUserModal() {
+      document.getElementById('userIdentifiant').value = '';
+      document.getElementById('userIdentifiant').disabled = false;
+      document.getElementById('userPassword').value = '';
+      document.getElementById('userName').value = '';
+      document.getElementById('userRole').value = 'vendeur';
+      document.querySelector('#userModal .modal-title').textContent = 'Ajouter un utilisateur';
+      document.getElementById('userModal').classList.remove('hidden');
+    }
+    
+    // Edit user
+    function editUser(username) {
+      google.script.run
+        .withSuccessHandler(function(user) {
+          if (user) {
+            document.getElementById('userIdentifiant').value = user.identifiant;
+            document.getElementById('userIdentifiant').disabled = true;
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userName').value = user.nom;
+            document.getElementById('userRole').value = user.role;
+            document.querySelector('#userModal .modal-title').textContent = 'Modifier un utilisateur';
+            document.getElementById('userModal').classList.remove('hidden');
+          } else {
+            alert('Utilisateur non trouvé');
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors de la récupération de l'utilisateur:", error);
+          alert('Erreur lors de la récupération de l\'utilisateur');
+        })
+        .getUserByUsername(username);
+    }
+    
+    // Delete user
+    function deleteUser(username) {
+      if (username === currentUser.identifiant) {
+        alert('Vous ne pouvez pas supprimer votre propre compte');
+        return;
+      }
+      
+      if (username === 'admin') {
+        alert('Le compte administrateur principal ne peut pas être supprimé');
+        return;
+      }
+      
+      if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+        google.script.run
+          .withSuccessHandler(function() {
+            loadUsers();
+          })
+          .withFailureHandler(function(error) {
+            console.error("Erreur lors de la suppression de l'utilisateur:", error);
+            alert('Erreur lors de la suppression de l\'utilisateur');
+          })
+          .deleteUser(username);
+      }
+    }
+    
+    // Save user
+    function saveUser() {
+      const user = {
+        identifiant: document.getElementById('userIdentifiant').value,
+        mot_de_passe: document.getElementById('userPassword').value,
+        nom: document.getElementById('userName').value,
+        role: document.getElementById('userRole').value
+      };
+      
+      if (!user.identifiant || !user.nom) {
+        alert('Veuillez remplir tous les champs obligatoires');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('saveUser');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Enregistrement...';
+      
+      if (document.getElementById('userIdentifiant').disabled) {
+        // Update existing user
+        if (!user.mot_de_passe) {
+          delete user.mot_de_passe; // Don't update password if empty
+        }
+        
+        google.script.run
+          .withSuccessHandler(function() {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            closeAllModals();
+            loadUsers();
+          })
+          .withFailureHandler(function(error) {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            console.error("Erreur lors de la mise à jour de l'utilisateur:", error);
+            alert('Erreur lors de la mise à jour de l\'utilisateur');
+          })
+          .updateUser(user);
+      } else {
+        // Create new user
+        if (!user.mot_de_passe) {
+          alert('Veuillez saisir un mot de passe');
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Enregistrer';
+          return;
+        }
+        
+        google.script.run
+          .withSuccessHandler(function() {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            closeAllModals();
+            loadUsers();
+          })
+          .withFailureHandler(function(error) {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            console.error("Erreur lors de la création de l'utilisateur:", error);
+            alert('Erreur lors de la création de l\'utilisateur');
+          })
+          .createUser(user);
+      }
+    }
+
+    // Force loading products for specific tab
+function forceLoadProducts(tabType) {
+  console.log("Force loading products for: " + tabType);
+  
+  // Clear previous content first
+  document.querySelector('#productsTable tbody').innerHTML = '<tr><td colspan="4" style="text-align:center;">Chargement des produits...</td></tr>';
+  
+  if (tabType === 'bar-products' || tabType === 'restaurant-products') {
+    const category = tabType === 'bar-products' ? 'bar' : 'restaurant';
+    
+    google.script.run
+      .withSuccessHandler(function(products) {
+        // Filter products based on category
+        const filteredProducts = products.filter(p => p.categorie === category);
+        renderAllProducts(filteredProducts);
+      })
+      .withFailureHandler(function(error) {
+        console.error("Erreur lors du chargement des produits:", error);
+        document.querySelector('#productsTable tbody').innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Erreur lors du chargement des produits</td></tr>';
+      })
+      .getAllProducts();
+  }
+}
+    
+    // Load products
+// Load products
+function loadProducts() {
+  const tableBody = document.querySelector('#productsTable tbody');
+  tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Chargement des produits...</td></tr>';
+  
+  google.script.run
+    .withSuccessHandler(function(products) {
+      // Si l'onglet "Produits Bar" est actif, filtrer pour n'afficher que les produits de bar
+      // Si l'onglet "Produits Restaurant" est actif, filtrer pour n'afficher que les produits de restaurant
+      // Sinon, afficher tous les produits
+      const activeTab = document.querySelector('#productsTab .tabs .active');
+      if (activeTab) {
+        const tabType = activeTab.getAttribute('data-tab');
+        if (tabType === 'bar-products') {
+          renderAllProducts(products.filter(p => p.categorie === 'bar'));
+        } else if (tabType === 'restaurant-products') {
+          renderAllProducts(products.filter(p => p.categorie === 'restaurant'));
+        } else {
+          renderAllProducts(products);
+        }
+      } else {
+        // Si aucun onglet n'est actif, activer l'onglet "Produits Bar" par défaut
+        const barProductsTab = document.querySelector('#productsTab .tabs [data-tab="bar-products"]');
+        if (barProductsTab) {
+          barProductsTab.click(); // Simuler un clic sur l'onglet "Produits Bar"
+        } else {
+          renderAllProducts(products); // Afficher tous les produits si l'onglet n'existe pas
+        }
+      }
+    })
+    .withFailureHandler(function(error) {
+      console.error("Erreur lors du chargement des produits:", error);
+      tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Erreur lors du chargement des produits</td></tr>';
+    })
+    .getAllProducts();
+}
+    
+    // Load products by category
+    function loadProductsByCategory(category) {
+      const tableBody = document.querySelector('#productsTable tbody');
+      tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Chargement des produits...</td></tr>';
+      
+      google.script.run
+        .withSuccessHandler(function(products) {
+          renderAllProducts(products.filter(p => p.categorie === category));
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors du chargement des produits par catégorie:", error);
+          tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:red;">Erreur lors du chargement des produits</td></tr>';
+        })
+        .getAllProducts();
+    }
+    
+    // Render all products
+    function renderAllProducts(products) {
+      const tableBody = document.querySelector('#productsTable tbody');
+      
+      if (!products || products.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Aucun produit trouvé</td></tr>';
+        return;
+      }
+      
+      tableBody.innerHTML = '';
+      
+      products.forEach(product => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${product.nom}</td>
+          <td>${product.prix.toFixed(2)} €</td>
+          <td>${product.categorie === 'bar' ? 'Bar' : 'Restaurant'}</td>
+          <td>
+            <button class="action-btn edit-btn">Modifier</button>
+            <button class="action-btn delete-btn">Supprimer</button>
+          </td>
+        `;
+        
+        // Add event listeners
+        const editBtn = row.querySelector('.edit-btn');
+        const deleteBtn = row.querySelector('.delete-btn');
+        
+        editBtn.addEventListener('click', function() {
+          editProduct(product.id);
+        });
+        
+        deleteBtn.addEventListener('click', function() {
+          deleteProduct(product.id);
+        });
+        
+        tableBody.appendChild(row);
+      });
+    }
+    
+    // Show add product modal
+    function showAddProductModal() {
+      document.getElementById('productName').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productCategory').value = 'bar';
+      document.querySelector('#productModal .modal-title').textContent = 'Ajouter un produit';
+      
+      // Set current active tab as default category
+      const activeProductTab = document.querySelector('#productsTab .tabs .active').getAttribute('data-tab');
+      if (activeProductTab === 'bar-products') {
+        document.getElementById('productCategory').value = 'bar';
+      } else {
+        document.getElementById('productCategory').value = 'restaurant';
+      }
+      
+      // Clear the product ID
+      document.getElementById('saveProduct').removeAttribute('data-id');
+      
+      document.getElementById('productModal').classList.remove('hidden');
+    }
+    
+    // Edit product
+    function editProduct(id) {
+      google.script.run
+        .withSuccessHandler(function(product) {
+          if (product) {
+            document.getElementById('productName').value = product.nom;
+            document.getElementById('productPrice').value = product.prix;
+            document.getElementById('productCategory').value = product.categorie;
+            
+            // Store product ID in a data attribute
+            document.getElementById('saveProduct').setAttribute('data-id', product.id);
+            
+            document.querySelector('#productModal .modal-title').textContent = 'Modifier un produit';
+            document.getElementById('productModal').classList.remove('hidden');
+          } else {alert('Produit non trouvé');
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors de la récupération du produit:", error);
+          alert('Erreur lors de la récupération du produit');
+        })
+        .getProductById(id);
+    }
+    
+    // Delete product
+    function deleteProduct(id) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+        google.script.run
+          .withSuccessHandler(function() {
+            loadProducts();
+            // Also refresh the product lists in the cash register
+            loadBarProducts();
+            loadRestaurantProducts();
+          })
+          .withFailureHandler(function(error) {
+            console.error("Erreur lors de la suppression du produit:", error);
+            alert('Erreur lors de la suppression du produit');
+          })
+          .deleteProduct(id);
+      }
+    }
+    
+    // Save product
+    function saveProduct() {
+      const product = {
+        nom: document.getElementById('productName').value,
+        prix: parseFloat(document.getElementById('productPrice').value),
+        categorie: document.getElementById('productCategory').value
+      };
+      
+      if (!product.nom || isNaN(product.prix)) {
+        alert('Veuillez remplir tous les champs correctement');
+        return;
+      }
+      
+      const saveBtn = document.getElementById('saveProduct');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Enregistrement...';
+      
+      const productId = saveBtn.getAttribute('data-id');
+      
+      if (productId) {
+        // Update existing product
+        product.id = parseInt(productId);
+        
+        google.script.run
+          .withSuccessHandler(function() {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            closeAllModals();
+            loadProducts();
+            // Also refresh the product lists in the cash register
+            loadBarProducts();
+            loadRestaurantProducts();
+          })
+          .withFailureHandler(function(error) {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            console.error("Erreur lors de la mise à jour du produit:", error);
+            alert('Erreur lors de la mise à jour du produit');
+          })
+          .updateProduct(product);
+      } else {
+        // Create new product
+        google.script.run
+          .withSuccessHandler(function() {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            closeAllModals();
+            loadProducts();
+            // Also refresh the product lists in the cash register
+            loadBarProducts();
+            loadRestaurantProducts();
+          })
+          .withFailureHandler(function(error) {
+            // Re-enable the button
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'Enregistrer';
+            
+            console.error("Erreur lors de la création du produit:", error);
+            alert('Erreur lors de la création du produit');
+          })
+          .createProduct(product);
+      }
+    }
+    
+    // Load reports
+    function loadReports() {
+      loadReportsByPeriod('daily');
+    }
+    
+    // Load reports by period
+    function loadReportsByPeriod(period) {
+      const container = document.getElementById('reportsContent');
+      container.innerHTML = '<div style="text-align:center; padding:20px;">Chargement des rapports...</div>';
+      
+      google.script.run
+        .withSuccessHandler(function(reports) {
+          renderReports(reports, period);
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors du chargement des rapports:", error);
+          container.innerHTML = '<div style="text-align:center; padding:20px; color:red;">Erreur lors du chargement des rapports</div>';
+        })
+        .getReports(period);
+    }
+    
+    // Render reports
+    function renderReports(reports, period) {
+      const container = document.getElementById('reportsContent');
+      
+      if (reports.totalSales === 0) {
+        container.innerHTML = '<div style="text-align:center; margin-top:20px;">Aucune donnée pour cette période</div>';
+        return;
+      }
+      
+      // Create title based on period
+      let title = '';
+      switch(period) {
+        case 'daily':
+          title = 'Rapport journalier - ' + new Date().toLocaleDateString('fr-FR');
+          break;
+        case 'weekly':
+          title = 'Rapport hebdomadaire';
+          break;
+        case 'monthly':
+          title = 'Rapport mensuel - ' + new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+          break;
+      }
+      
+      container.innerHTML = `
+        <h3 style="margin-top: 20px; margin-bottom: 15px;">${title}</h3>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
+          <div style="background-color: var(--primary-color); color: white; padding: 15px; border-radius: 6px; flex: 1; min-width: 200px;">
+            <div style="font-size: 14px; margin-bottom: 5px;">Ventes Totales</div>
+            <div style="font-size: 24px; font-weight: 500;">${reports.totalSales.toFixed(2)} €</div>
+          </div>
+          
+          <div style="background-color: var(--secondary-color); color: white; padding: 15px; border-radius: 6px; flex: 1; min-width: 200px;">
+            <div style="font-size: 14px; margin-bottom: 5px;">Nombre de Commandes</div>
+            <div style="font-size: 24px; font-weight: 500;">${reports.orderCount}</div>
+          </div>
+          
+          <div style="background-color: var(--quaternary-color); color: white; padding: 15px; border-radius: 6px; flex: 1; min-width: 200px;">
+            <div style="font-size: 14px; margin-bottom: 5px;">Panier Moyen</div>
+            <div style="font-size: 24px; font-weight: 500;">${(reports.totalSales / reports.orderCount).toFixed(2)} €</div>
+          </div>
+        </div>
+        
+        <h4 style="margin-top: 25px; margin-bottom: 15px;">Ventes par Catégorie</h4>
+        <div style="display: flex; gap: 20px; margin-bottom: 30px;">
+          <div style="flex: 1; background-color: var(--card-color); padding: 15px; border-radius: 6px; box-shadow: 0 2px 5px var(--shadow-color);">
+            <div style="font-weight: 500; margin-bottom: 10px;">Bar</div>
+            <div style="font-size: 20px; color: var(--primary-color);">${reports.barSales.toFixed(2)} €</div>
+            <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 5px;">${Math.round((reports.barSales / reports.totalSales) * 100)}% des ventes</div>
+          </div>
+          
+          <div style="flex: 1; background-color: var(--card-color); padding: 15px; border-radius: 6px; box-shadow: 0 2px 5px var(--shadow-color);">
+            <div style="font-weight: 500; margin-bottom: 10px;">Restaurant</div>
+            <div style="font-size: 20px; color: var(--secondary-color);">${reports.restaurantSales.toFixed(2)} €</div>
+            <div style="font-size: 14px; color: var(--text-color); opacity: 0.8; margin-top: 5px;">${Math.round((reports.restaurantSales / reports.totalSales) * 100)}% des ventes</div>
+          </div>
+        </div>
+        
+        <h4 style="margin-top: 25px; margin-bottom: 15px;">Produits les plus vendus</h4>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Produit</th>
+                <th>Catégorie</th>
+                <th>Quantité</th>
+                <th>Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${reports.topProducts.map(product => `
+                <tr>
+                  <td>${product.name}</td>
+                  <td>${product.category === 'bar' ? 'Bar' : 'Restaurant'}</td>
+                  <td>${product.quantity}</td>
+                  <td>${product.total.toFixed(2)} €</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+    
+    // Save settings
+    function saveSettings() {
+      const settings = {
+        businessName: document.getElementById('businessName').value,
+      };
+      
+      const saveBtn = document.getElementById('saveSettings');
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Enregistrement...';
+      
+      google.script.run
+        .withSuccessHandler(function() {
+          // Re-enable the button
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Enregistrer';
+          
+          alert('Paramètres enregistrés avec succès');
+        })
+        .withFailureHandler(function(error) {
+          // Re-enable the button
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Enregistrer';
+          
+          console.error("Erreur lors de l'enregistrement des paramètres:", error);
+          alert('Erreur lors de l\'enregistrement des paramètres');
+        })
+        .updateSettings(settings);
+    }
+    
+    // Close all modals
+    function closeAllModals() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.add('hidden');
+      });
+      
+      // Clear data attributes
+      document.getElementById('saveProduct').removeAttribute('data-id');
+    }
+    
+    // Initialize the page with the login form
+    // If this is a development environment, automatically log in as admin
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      document.getElementById('username').value = 'admin';
+      document.getElementById('password').value = 'admin123';
+    }
+  </script>
+</body>
+</html>

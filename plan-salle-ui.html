@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan de Salle - Beach Club</title>
+  <base target="_top">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <style>
+/* Responsive styles */
+    @media (max-width: 768px) {
+      .module-content {
+        padding: 15px;
+      }
+      
+      .floor-plan-container {
+        height: 400px;
+      }
+      
+      .floor-plan-controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .controls-right {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 10px;
+      }
+      
+      .modal-body-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .grid-span-2 {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Beach Club Management</h1>
+        <p>Plan de Salle</p>
+      </div>
+      <div class="header-buttons">
+        <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button>
+        <button id="returnToMain" class="btn btn-transparent">Retour à la Caisse</button>
+      </div>
+    </div>
+    
+    <div class="module-container">
+      <div class="module-content">
+        <div class="info-box">
+          <div class="floor-plan-info">
+            <p><i class="fas fa-info-circle"></i> Bienvenue dans le plan de salle. Double-cliquez sur une table pour ouvrir la caisse associée.</p>
+            <p><i class="fas fa-info-circle"></i> Les tables en bleu sont libres, celles en rouge sont occupées.</p>
+          </div>
+        </div>
+        
+        <div class="floor-plan-controls">
+          <button id="addTableBtn" class="btn"><i class="fas fa-plus"></i> Ajouter une table</button>
+          <div class="controls-right">
+            <button id="saveFloorPlanBtn" class="btn btn-success"><i class="fas fa-save"></i> Enregistrer le plan</button>
+          </div>
+        </div>
+        
+        <div id="floorPlanContainer" class="floor-plan-container">
+          <!-- Les tables seront ajoutées ici dynamiquement -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal pour ajouter/modifier une table -->
+    <div id="tableModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Ajouter une table</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-body-grid">
+            <div class="form-group">
+              <label for="tableNumber">Numéro de table</label>
+              <input type="number" id="tableNumber" min="1">
+            </div>
+            <div class="form-group">
+              <label for="tableSeats">Nombre de places</label>
+              <input type="number" id="tableSeats" min="1">
+            </div>
+            <div class="form-group grid-span-2">
+              <label for="tableShape">Forme de la table</label>
+              <select id="tableShape">
+                <option value="square">Carrée</option>
+                <option value="round">Ronde</option>
+                <option value="rectangle">Rectangle</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" id="cancelTableModal">Annuler</button>
+          <button class="btn btn-success" id="saveTableBtn">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal pour confirmer la libération d'une table -->
+    <div id="confirmFreeModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Libérer la table</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Êtes-vous sûr de vouloir libérer la table <span id="tableNumberToFree"></span>?</p>
+          <p>Cette action supprimera la commande associée.</p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" id="cancelFreeModal">Annuler</button>
+          <button class="btn btn-danger" id="confirmFreeBtn">Libérer la table</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal pour afficher les détails d'une table -->
+    <div id="tableDetailsModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Détails de la table <span id="tableDetailNumber"></span></h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="tableDetailContent">
+            <!-- Contenu des détails de la table -->
+          </div>
+          <div class="action-buttons">
+            <button class="btn" id="editTableBtn"><i class="fas fa-edit"></i> Modifier la table</button>
+            <button class="btn btn-danger" id="freeTableBtn"><i class="fas fa-times"></i> Libérer la table</button>
+            <button class="btn btn-success" id="openCashRegisterBtn"><i class="fas fa-cash-register"></i> Ouvrir la caisse</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Beach Club Management &copy; 2025</p>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let tables = [];
+    let draggedTable = null;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    let selectedTable = null;
+    let isDarkMode = false;
+    
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', function() {
+      setupEventListeners();
+      loadTables();
+      
+      // Vérifier le thème sombre enregistré
+      const savedDarkMode = localStorage.getItem('darkMode');
+      if (savedDarkMode === 'true') {
+        enableDarkMode();
+      }
+    });
+    
+    // Configuration des écouteurs d'événements
+    function setupEventListeners() {
+      // Bouton pour ajouter une table
+      document.getElementById('addTableBtn').addEventListener('click', showAddTableModal);
+      
+      // Bouton pour enregistrer le plan de salle
+      document.getElementById('saveFloorPlanBtn').addEventListener('click', saveFloorPlan);
+      
+      // Bouton pour basculer le thème
+      document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+      
+      // Bouton pour retourner à la caisse principale
+      document.getElementById('returnToMain').addEventListener('click', returnToMainApp);
+      
+      // Fermeture des modales
+      document.querySelectorAll('.modal-close').forEach(button => {
+        button.addEventListener('click', closeAllModals);
+      });
+      
+      // Boutons des modales
+      document.getElementById('cancelTableModal').addEventListener('click', closeAllModals);
+      document.getElementById('saveTableBtn').addEventListener('click', saveTable);
+      document.getElementById('cancelFreeModal').addEventListener('click', closeAllModals);
+      document.getElementById('confirmFreeBtn').addEventListener('click', confirmFreeTable);
+      
+      // Boutons du modal de détails
+      document.getElementById('editTableBtn').addEventListener('click', editSelectedTable);
+      document.getElementById('freeTableBtn').addEventListener('click', showFreeTableModal);
+      document.getElementById('openCashRegisterBtn').addEventListener('click', openCashRegister);
+      
+      // Événements de déplacement pour le plan de salle
+      document.addEventListener('mousemove', dragTable);
+      document.addEventListener('mouseup', stopDragging);
+    }
+    
+    // Charger les tables depuis le serveur
+    function loadTables() {
+      const container = document.getElementById('floorPlanContainer');
+      container.innerHTML = '<div style="text-align:center; padding:20px;">Chargement du plan de salle...</div>';
+      
+      google.script.run
+        .withSuccessHandler(function(loadedTables) {
+          tables = loadedTables || [];
+          renderTables();
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors du chargement des tables:", error);
+          container.innerHTML = '<div style="text-align:center; padding:20px; color:red;">Erreur lors du chargement du plan de salle</div>';
+          // Créer quelques tables par défaut en cas d'erreur
+          tables = createDefaultTables();
+          renderTables();
+        })
+        .getTables();
+    }
+    
+    // Créer des tables par défaut
+    function createDefaultTables() {
+      return [
+        { id: 1, number: 1, seats: 2, x: 50, y: 50, shape: 'square', occupied: false, orderId: "" },
+        { id: 2, number: 2, seats: 4, x: 150, y: 50, shape: 'square', occupied: false, orderId: "" },
+        { id: 3, number: 3, seats: 6, x: 250, y: 50, shape: 'rectangle', occupied: false, orderId: "" },
+        { id: 4, number: 4, seats: 8, x: 50, y: 150, shape: 'round', occupied: false, orderId: "" }
+      ];
+    }
+    
+    // Afficher les tables sur le plan
+    function renderTables() {
+      const container = document.getElementById('floorPlanContainer');
+      container.innerHTML = '';
+      
+      tables.forEach(table => {
+        const tableElement = document.createElement('div');
+        tableElement.className = `table table-${table.shape} ${table.occupied ? 'occupied' : ''}`;
+        tableElement.dataset.id = table.id;
+        tableElement.style.left = `${table.x}px`;
+        tableElement.style.top = `${table.y}px`;
+        
+        tableElement.innerHTML = `
+          <div class="table-number">Table ${table.number}</div>
+          <div class="table-seats">${table.seats} places</div>
+        `;
+        
+        // Événement de glisser-déposer
+        tableElement.addEventListener('mousedown', startDragging);
+        
+        // Événement de double-clic pour ouvrir la caisse
+        tableElement.addEventListener('dblclick', function() {
+          selectTable(table);
+        });
+        
+        // Événement de clic simple pour afficher les détails
+        tableElement.addEventListener('click', function(e) {
+          if (e.detail === 1) { // Si c'est un clic simple
+            showTableDetails(table);
+          }
+        });
+        
+        container.appendChild(tableElement);
+      });
+    }
+    
+    // Démarrer le glissement d'une table
+    function startDragging(e) {
+      const tableElement = e.currentTarget;
+      draggedTable = tableElement;
+      
+      // Calculer le décalage entre la position de la souris et celle de la table
+      const rect = tableElement.getBoundingClientRect();
+      dragOffsetX = e.clientX - rect.left;
+      dragOffsetY = e.clientY - rect.top;
+      
+      // Prévenir la sélection de texte pendant le drag
+      e.preventDefault();
+    }
+    
+    // Déplacer la table en glisser-déposer
+    function dragTable(e) {
+      if (draggedTable) {
+        // Calculer la nouvelle position
+        const container = document.getElementById('floorPlanContainer');
+        const containerRect = container.getBoundingClientRect();
+        
+        let newX = e.clientX - containerRect.left - dragOffsetX;
+        let newY = e.clientY - containerRect.top - dragOffsetY;
+        
+        // Limiter les positions dans le conteneur
+        const tableWidth = draggedTable.offsetWidth;
+        const tableHeight = draggedTable.offsetHeight;
+        
+        newX = Math.max(0, Math.min(newX, containerRect.width - tableWidth));
+        newY = Math.max(0, Math.min(newY, containerRect.height - tableHeight));
+        
+        // Mettre à jour la position visuelle
+        draggedTable.style.left = `${newX}px`;
+        draggedTable.style.top = `${newY}px`;
+        
+        // Mettre à jour la position dans les données
+        const tableId = parseInt(draggedTable.dataset.id);
+        const tableIndex = tables.findIndex(t => t.id === tableId);
+        if (tableIndex !== -1) {
+          tables[tableIndex].x = newX;
+          tables[tableIndex].y = newY;
+        }
+      }
+    }
+    
+    // Arrêter le glissement
+    function stopDragging() {
+      draggedTable = null;
+    }
+    
+    // Sélectionner une table
+    function selectTable(table) {
+      selectedTable = table;
+      
+      if (table.occupied) {
+        showTableDetails(table);
+      } else {
+        openCashRegister();
+      }
+    }
+    
+    // Afficher les détails d'une table
+    function showTableDetails(table) {
+      selectedTable = table;
+      document.getElementById('tableDetailNumber').textContent = table.number;
+      
+      let content = `
+        <div class="form-group">
+          <label>Numéro de table</label>
+          <p>${table.number}</p>
+        </div>
+        <div class="form-group">
+          <label>Nombre de places</label>
+          <p>${table.seats}</p>
+        </div>
+        <div class="form-group">
+          <label>Forme</label>
+          <p>${getShapeName(table.shape)}</p>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <p>${table.occupied ? '<span style="color: var(--danger-color);">Occupée</span>' : '<span style="color: var(--success-color);">Libre</span>'}</p>
+        </div>
+      `;
+      
+      document.getElementById('tableDetailContent').innerHTML = content;
+      
+      // Afficher/masquer les boutons appropriés
+      document.getElementById('freeTableBtn').style.display = table.occupied ? 'inline-block' : 'none';
+      document.getElementById('openCashRegisterBtn').textContent = table.occupied ? 'Voir la commande' : 'Ouvrir la caisse';
+      
+      document.getElementById('tableDetailsModal').classList.remove('hidden');
+    }
+    
+    // Obtenir le nom de la forme en français
+    function getShapeName(shape) {
+      switch(shape) {
+        case 'square':
+          return 'Carrée';
+        case 'round':
+          return 'Ronde';
+        case 'rectangle':
+          return 'Rectangle';
+        default:
+          return shape;
+      }
+    }
+    
+    // Modifier la table sélectionnée
+    function editSelectedTable() {
+      if (!selectedTable) return;
+      
+      document.getElementById('tableNumber').value = selectedTable.number;
+      document.getElementById('tableSeats').value = selectedTable.seats;
+      document.getElementById('tableShape').value = selectedTable.shape;
+      
+      document.querySelector('#tableModal .modal-title').textContent = 'Modifier la table';
+      document.getElementById('tableModal').classList.remove('hidden');
+      document.getElementById('tableDetailsModal').classList.add('hidden');
+    }
+    
+    // Afficher le modal de libération de table
+    function showFreeTableModal() {
+      if (!selectedTable || !selectedTable.occupied) return;
+      
+      document.getElementById('tableNumberToFree').textContent = selectedTable.number;
+      document.getElementById('confirmFreeModal').classList.remove('hidden');
+      document.getElementById('tableDetailsModal').classList.add('hidden');
+    }
+    
+    // Confirmer la libération d'une table
+    function confirmFreeTable() {
+      if (!selectedTable) return;
+      
+      const tableId = selectedTable.id;
+      
+      google.script.run
+        .withSuccessHandler(function(success) {
+          if (success) {
+            // Mise à jour de l'interface
+            const tableIndex = tables.findIndex(t => t.id === tableId);
+            if (tableIndex !== -1) {
+              tables[tableIndex].occupied = false;
+              tables[tableIndex].orderId = "";
+              renderTables();
+            }
+            
+            closeAllModals();
+          } else {
+            alert('Erreur lors de la libération de la table');
+          }
+        })
+        .withFailureHandler(function(error) {
+          console.error("Erreur lors de la libération de la table:", error);
+          alert('Erreur lors de la libération de la table');
+        })
+        .freeTable(tableId);
+    }
+    
+    // Ouvrir la caisse pour la table sélectionnée
+    function openCashRegister() {
+      if (!selectedTable) return;
+      
+      closeAllModals();
+      
+      // Stocker l'ID de la table dans le stockage local
+      localStorage.setItem('selectedTableId', selectedTable.id);
+      localStorage.setItem('selectedTableNumber', selectedTable.number);
+      
+      // Rediriger vers l'application principale
+      google.script.run.withSuccessHandler(function(url) {
+  window.location.href = url;
+}).getScriptUrl();
+    }
+    
+    // Afficher le modal d'ajout de table
+    function showAddTableModal() {
+      // Trouver le prochain numéro de table disponible
+      const nextNumber = tables.length > 0 ? Math.max(...tables.map(t => t.number)) + 1 : 1;
+      
+      document.getElementById('tableNumber').value = nextNumber;
+      document.getElementById('tableSeats').value = 4;
+      document.getElementById('tableShape').value = 'square';
+      
+      document.querySelector('#tableModal .modal-title').textContent = 'Ajouter une table';
+      document.getElementById('tableModal').classList.remove('hidden');
+    }
+    
+    // Enregistrer une table (ajout ou modification)
+    function saveTable() {
+      const number = parseInt(document.getElementById('tableNumber').value);
+      const seats = parseInt(document.getElementById('tableSeats').value);
+      const shape = document.getElementById('tableShape').value;
+      
+      if (isNaN(number) || isNaN(seats) || number < 1 || seats < 1) {
+        alert('Veuillez remplir tous les champs correctement');
+        return;
+      }
+      
+      if (selectedTable) {
+        // Modification d'une table existante
+        const tableIndex = tables.findIndex(t => t.id === selectedTable.id);
+        if (tableIndex !== -1) {
+          // Vérifier si le numéro de table existe déjà
+          if (number !== selectedTable.number && tables.some(t => t.number === number)) {
+            alert('Ce numéro de table existe déjà');
+            return;
+          }
+          
+          // Mettre à jour la table
+          tables[tableIndex].number = number;
+          tables[tableIndex].seats = seats;
+          tables[tableIndex].shape = shape;
+        }
+      } else {
+        // Ajout d'une nouvelle table
+        // Vérifier si le numéro de table existe déjà
+        if (tables.some(t => t.number === number)) {
+          alert('Ce numéro de table existe déjà');
+          return;
+        }
+        
+        // Créer une nouvelle table
+        const newTable = {
+          id: Date.now(),
+          number,
+          seats,
+          shape,
+          x: 50,
+          y: 50,
+          occupied: false,
+          orderId: ""
+        };
+        
+        tables.push(newTable);
+      }
+      
+      // Fermer le modal et actualiser l'affichage
+      closeAllModals();
+      renderTables();
+    }
+    
+    // Enregistrer le plan de salle
+    function saveFloorPlan() {
+      const saveBtn = document.getElementById('saveFloorPlanBtn');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+      
+      google.script.run
+        .withSuccessHandler(function(success) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer le plan';
+          
+          if (success) {
+            // Afficher un message de confirmation
+            alert('Plan de salle enregistré avec succès');
+          } else {
+            alert('Erreur lors de l\'enregistrement du plan de salle');
+          }
+        })
+        .withFailureHandler(function(error) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer le plan';
+          
+          console.error("Erreur lors de l'enregistrement du plan de salle:", error);
+          alert('Erreur lors de l\'enregistrement du plan de salle');
+        })
+        .saveTables(tables);
+    }
+    
+    // Fermer tous les modals
+    function closeAllModals() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.add('hidden');
+      });
+      
+      // Réinitialiser la table sélectionnée pour l'édition
+      if (document.querySelector('#tableModal .modal-title').textContent === 'Modifier la table') {
+        selectedTable = null;
+      }
+    }
+    
+    // Retourner à l'application principale
+    function returnToMainApp() {
+      google.script.run.withSuccessHandler(function(url) {
+  window.location.href = url;
+}).getScriptUrl();
+    }
+    
+    // Basculer le thème sombre
+    function toggleDarkMode() {
+      if (isDarkMode) {
+        disableDarkMode();
+      } else {
+        enableDarkMode();
+      }
+    }
+    
+    // Activer le thème sombre
+    function enableDarkMode() {
+      document.body.classList.add('dark-mode');
+      document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+      isDarkMode = true;
+      localStorage.setItem('darkMode', 'true');
+    }
+    
+    // Désactiver le thème sombre
+    function disableDarkMode() {
+      document.body.classList.remove('dark-mode');
+      document.getElementById('themeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+      isDarkMode = false;
+      localStorage.setItem('darkMode', 'false');
+    }
+  </script>
+</body>
+</html>
